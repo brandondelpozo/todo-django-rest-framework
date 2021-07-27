@@ -91,7 +91,7 @@
 
 	</div>
 
-    <script type="text/javascript"></script>
+    <script type="text/javascript">
         /*
             KEY COMPONENTS:
             "activeItem" = null until an edit button is clicked. Will contain object of item we are editing
@@ -109,6 +109,62 @@
             -- Remove extra data on re-render
             -- CSRF Token
         */
+
+
+
+		buildList()
+
+        function buildList(){
+            var wrapper = document.getElementById('list-wrapper')
+
+			var url = 'http://127.0.0.1:8000/api/task-list/'
+
+			fetch(url)
+			.then((resp) => resp.json())
+			.then(function(data){
+				console.log('Data:', data)
+				
+				var list = data
+				for (var i in list){
+					var item = `
+						<div id="data-row-${i}" class="task-wrapper flex-wrapper">
+							<div style="flex:7">
+								<span class="title">${list[i].title}</span>
+							</div>
+							<div style="flex:1">
+								<button  class="btn btn-sm btn-outline-info edit">Edit</button>
+							</div>
+							<div style="flex:1">
+								<button class="btn btn-sm btn-outline-dark delete">-</button>
+							</div>
+						</div>
+					`
+					wrapper.innerHTML += item
+
+					
+				}
+			})
+        }
+
+		var form = document.getElementById('form-wrapper')
+		form.addEventListener('submit', function(e){
+			e.preventDefault()
+			console.log('Form submitted')
+			var url = 'http://127.0.0.1:8000/api/task-create/'
+			var title = document.getElementById('title').value
+			fetch(url, {
+				method:'POST',
+				headers:{
+					'Content-type':'application/json',
+				}
+				body:JSON.stringify({'title':title})
+			}
+			).then(function(response){
+				buildList()
+			})
+		})
+
+	</script>
 
 </body>
 </html>
