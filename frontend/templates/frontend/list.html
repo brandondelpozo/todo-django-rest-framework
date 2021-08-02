@@ -156,10 +156,11 @@
 							</div>
 						</div>
 					`
+
 					wrapper.innerHTML += item
 
 					
-				}
+					var editBtn = document.getElementByClassName('edit')[i]			}
 			})
         }
 
@@ -179,8 +180,12 @@
 			}
 			).then(function(response){
 				buildList()
+				document.getElementById('form').reset()
 			})
 		})
+		function editItem(){
+			console.log('Item clicked')
+		}
 
 	</script>
 

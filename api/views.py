@@ -6,6 +6,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import TaskSerializer
 
+#from django.views.decorators.csrf import ensure_csrf_cookie
+#from django.views.decorators.csrf import csrf_exempt
+
 from .models import Task
 
 # Create your views here.
@@ -21,21 +24,24 @@ def apiOverview(request):
     }
 
     return Response(api_urls)
-    
+
+#@csrf_exempt
 @api_view(['GET'])
 def taskList(request):
-    tasks = Task.objects.all()
+    tasks = Task.objects.all().order_by('-id')
     serializer = TaskSerializer(tasks, many=True)
     return Response(serializer.data)
 
+#@csrf_exempt
 @api_view(['GET'])
 def taskDetail(request, pk):
     tasks = Task.objects.get(id=pk)
     serializer = TaskSerializer(tasks, many=False)
     return Response(serializer.data)
 
-
+#@ensure_csrf_cookie
 @api_view(['POST'])
+#@csrf_exempt
 def taskCreate(request):
     serializer = TaskSerializer(data=request.data)
 
@@ -44,6 +50,7 @@ def taskCreate(request):
 
     return Response(serializer.data)
 
+#@csrf_exempt
 @api_view(['POST'])
 def taskUpdate(request, pk):
     task = Task.objects.get(id=pk)
@@ -54,6 +61,7 @@ def taskUpdate(request, pk):
 
     return Response(serializer.data)
 
+#@csrf_exempt
 @api_view(['DELETE'])
 def taskDelete(request, pk):
     task = Task.objects.get(id=pk)

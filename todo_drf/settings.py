@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_COOKIE_DOMAIN = '127.0.0.1'
 
 # Application definition
 
