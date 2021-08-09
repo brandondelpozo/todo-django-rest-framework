@@ -126,6 +126,8 @@
 			return cookieValue;
 		}
 		var csrftoken = getCookie('csrftoken');
+
+		var activeItem = null
 		
 		
 		buildList()
@@ -151,7 +153,7 @@
 							<div style="flex:1">
 								<button  class="btn btn-sm btn-outline-info edit">Edit</button>
 							</div>
-							<div style="flex:1"><
+							<div style="flex:1">
 								<button class="btn btn-sm btn-outline-dark delete">-</button>
 							</div>
 						</div>
@@ -159,8 +161,35 @@
 
 					wrapper.innerHTML += item
 
+								
+				}
+
+				for (var i in list){
+					var editBtn = document.getElementsByClassName('edit')[i]
+					var deleteBtn = document.getElementsByClassName('delete')[i]
+					var title = document.getElementsByClassName('title')[i]
+
+					editBtn.addEventListener('click', (function(item){
+						return function(){
+							editItem(item)
+						}
+					})(list[i]))
 					
-					var editBtn = document.getElementsByClassName('edit')[i]			}
+					
+					deleteBtn.addEventListener('click', (function(item){
+						return function(){
+							deleteItem(item)
+						}
+					})(list[i]))
+
+					
+					title.addEventListener('click', (function(item){
+						return function(){
+							strikeUnstrike(item)
+						}
+					})(list[i]))
+
+				}
 			})
         }
 
@@ -169,6 +198,12 @@
 			e.preventDefault()
 			console.log('Form submitted')
 			var url = 'http://127.0.0.1:8000/api/task-create/'
+			if (activeItem != null){
+				var url = `http://127.0.0.1:8000/api/task-update/${activeItem.id}/`
+				activeItem = null
+			}
+
+
 			var title = document.getElementById('title').value
 			fetch(url, {
 				method:'POST',
@@ -183,11 +218,44 @@
 				document.getElementById('form').reset()
 			})
 		})
-		function editItem(){
-			console.log('Item clicked')
+
+		function editItem(item){
+			console.log('Item clicked:', item)
+			activeItem = item
+			document.getElementById('title').value = activeItem.title
+		}
+
+		function deleteItem(item){
+			console.log('Delete clickled')
+			fetch(`http://127.0.0.1:8000/api/task-delete/${item.id}/`, {
+				method:'DELETE',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken': csrftoken,
+				}
+			}).then((response) => {
+				buildList()
+			})
+		}
+
+		function strikeUnstrike(item){
+			console.log('Strike clicked')
+
+			item.completed = !item.completed
+			fetch(`http://127.0.0.1:8000/api/task-update/${item.id}/`, {
+				method:'POST',
+				headers:{
+					'Content-type':'application/json',
+					'X-CSRFToken': csrftoken,
+				},
+				body:{'title':item.title, 'completed':item.completed}
+			}).then((response) => {
+				buildList()
+			})
 		}
 
 	</script>
 
 </body>
 </html>
+
