@@ -134,7 +134,14 @@
 
         function buildList(){
             var wrapper = document.getElementById('list-wrapper')
-			wrapper.innerHTML = ''
+			//wrapper.innerHTML = ''
+
+
+
+			document.getElementById()
+
+
+
 			var url = 'http://127.0.0.1:8000/api/task-list/'
 
 			fetch(url)
@@ -144,11 +151,16 @@
 				
 				var list = data
 				for (var i in list){
-					
+
+					var title = `<span class="title">${list[i].title}</span>`
+					if (list[i].completed == true){
+						title = `<strike class="title">${list[i].title}</strike>`
+					}
+
 					var item = `
 						<div id="data-row-${i}" class="task-wrapper flex-wrapper">
 							<div style="flex:7">
-								<span class="title">${list[i].title}</span>
+								${title}
 							</div>
 							<div style="flex:1">
 								<button  class="btn btn-sm btn-outline-info edit">Edit</button>
